@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch Folder Script
+After=default.target
+
+[Service]
+ExecStart=/home/kris/DevOps_9_Yakovenko/Homework_Yakovenko/Homework5/Src/10_watch_folder.sh
+Restart=always
+
+[Install]
+WantedBy=default.target
