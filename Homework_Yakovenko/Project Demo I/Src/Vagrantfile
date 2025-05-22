@@ -1,0 +1,33 @@
+Vagrant.configure("2") do |config|
+  db_user = "springuser"
+  db_pass = "springpass"
+  db_name = "petclinic"
+
+  config.vm.define "db" do |db|
+    db.vm.box = "ubuntu/bionic64"
+    db.vm.hostname = "db-vm"
+    db.vm.network "private_network", ip: "192.168.56.10"
+    db.vm.provision "shell", path: "provision_db.sh", env: {
+      "DB_USER" => db_user,
+      "DB_PASS" => db_pass,
+      "DB_NAME" => db_name
+    }
+    db.vm.provider "virtualbox" do |vb|
+      vb.name = "DB_VM"
+      vb.memory = 512
+    end
+  end
+
+  config.vm.define "app" do |app|
+    app.vm.box = "ubuntu/bionic64"
+    app.vm.hostname = "app-vm"
+    app.vm.network "private_network", ip: "192.168.56.11"
+    app.vm.network "forwarded_port", guest: 8080, host: 18080
+    app.vm.provision "shell", path: "provision_app.sh"
+    app.vm.provider "virtualbox" do |vb|
+      vb.name = "APP_VM"
+      vb.memory = 1024
+    end
+  end
+end
+
