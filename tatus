@@ -1,0 +1,54 @@
+[33m36e62cf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Видалено старий конфігураційний файл і додано новий
+[33mcadad50[m Додано конфігураційний файл SSH сервера для порту 3333
+[33me645ff4[m Added screenshots
+[33m6a39082[m Add sshd_config_2222 for SSH task on port 2222
+[33mf83a6aa[m Додано скріншот створення користувача john
+[33m4470b3e[m Додано скріншот запуску guess_game.sh
+[33m40e0182[m Додано скрипт Bash для гри 'Вгадай число'
+[33mfd81674[m Додано структуру Homework6 з папками Screens і Src
+[33m81d6712[m Add screenshot 01 for task 1
+[33m957326f[m Fix screenshot names for correct order
+[33m556dee8[m Add screenshots for tasks 1–11
+[33mc0ff2af[m Add systemd service for Task 11
+[33m5738013[m Add script 10_watch_folder.sh for Task 10
+[33m5fcff81[m Remove unnecessary copy_of_hello.sh
+[33m4f62c01[m Add working bash scripts 01–09 to Homework5/Src
+[33m933d41d[m Remove empty .sh scripts
+[33m903a51d[m Recreate ordered scripts in Homework5/Src
+[33me0bf21f[m Add missing scripts: hello, user_input, check_file
+[33m6beb067[m Add scripts to Homework5/Src
+[33mafdc303[m Add missing .gitkeep to Homework5/Screens
+[33mca23ef2[m Add Screens and Src folders to Homework5
+[33m79a3af6[m ✅ Recovered lost structure and files from commit 453e656
+[33mab1c5c8[m Recreate folder structure Homework_Yakovenko with Homework1–5
+[33m6591d20[m Removed redundant top-level folders
+[33md840d40[m Remove redundant Homework5 from repo root
+[33m8b0bba8[m Removed redundant Homework5 from root
+[33m1c5b35a[m Moved Homework5 inside Homework_Yakovenko
+[33m3044e66[m Add .gitkeep to Homework5 root
+[33m214d54e[m Add .gitkeep to root of Homework5 folder
+[33m9b1617f[m Added .gitkeep files again after cache reset
+[33m9c8721c[m Initialized Homework5 structure with Screens and SRC folders
+[33m453e656[m add final screenshots from user bob for Homework4
+[33m462ef7d[m delete all old screenshots
+[33m263e3c5[m delete wrong folder hostname_nginx_setup
+[33m9c1d93a[m add correct screenshots for Homework4
+[33m6830865[m add set_hostname.sh script
+[33m1e17e22[m add hostname_nginx_setup with script and README
+[33m8dda778[m create Homework4 with Screens and Src folders using .gitkeep
+[33m13e092f[m add corrected HOMEWORK3.docx and HOMEWORK3.pdf
+[33macefb8a[m delete HOMEWORK3.docx and HOMEWORK3.pdf
+[33mc0d877d[m add HOMEWORK3.pdf
+[33mbbc95b3[m add HOMEWORK3.docx
+[33m60d3d46[m Added README.md files to Screens and Src in Homework3
+[33mdfd7a1e[m Added Homework3 folder with Screens and Src
+[33m1bd844f[m Added HOMEWORK2.pdf to Homework2/Screens
+[33mdb524f6[m Added HOMEWORK2.docx to Homework2/Screens
+[33m90c3a30[m Added Screens and Src folders to Homework2
+[33m9eebbfd[m Move Homework2 to Homework_Yakovenko
+[33m34874ce[m Added Homework2 folder
+[33mc500950[m Добавлен скриншот Screen 1
+[33m1db98c4[m Добавлены .gitkeep в папках Screens и Src
+[33mfffe335[m New folder Homework1 and file README.md
+[33m0bb8ba6[m New folder Homework_Yakovenko
+[33m0f8ac6d[m Initial commit
