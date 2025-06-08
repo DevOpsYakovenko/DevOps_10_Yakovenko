@@ -1,0 +1,35 @@
+Status: 200
+Text: []
+
+Status: 201
+Text: {"age":"22","first_name":"Anna","id":"1","last_name":"Smith"}
+
+Status: 201
+Text: {"age":"25","first_name":"Ivan","id":"2","last_name":"Smith"}
+
+Status: 201
+Text: {"age":"31","first_name":"Kristina","id":"3","last_name":"Yakovenko"}
+
+Status: 200
+Text: [{"age":"22","first_name":"Anna","id":"1","last_name":"Smith"},{"age":"25","first_name":"Ivan","id":"2","last_name":"Smith"},{"age":"31","first_name":"Kristina","id":"3","last_name":"Yakovenko"}]
+
+Status: 200
+Text: {"age":"26","first_name":"Ivan","id":"2","last_name":"Smith"}
+
+Status: 200
+Text: {"age":"26","first_name":"Ivan","id":"2","last_name":"Smith"}
+
+Status: 200
+Text: {"age":"33","first_name":"Kristina","id":"3","last_name":"Petrenko"}
+
+Status: 200
+Text: {"age":"33","first_name":"Kristina","id":"3","last_name":"Petrenko"}
+
+Status: 200
+Text: [{"age":"22","first_name":"Anna","id":"1","last_name":"Smith"},{"age":"26","first_name":"Ivan","id":"2","last_name":"Smith"},{"age":"33","first_name":"Kristina","id":"3","last_name":"Petrenko"}]
+
+Status: 200
+Text: {"message":"Student with id 1 deleted successfully"}
+
+Status: 200
+Text: [{"age":"26","first_name":"Ivan","id":"2","last_name":"Smith"},{"age":"33","first_name":"Kristina","id":"3","last_name":"Petrenko"}]
