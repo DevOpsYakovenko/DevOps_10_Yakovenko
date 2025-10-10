@@ -1,0 +1,29 @@
+Vagrant.configure("2") do |config|
+  # Jenkins Master
+  config.vm.define "jenkins-master" do |master|
+    master.vm.box = "ubuntu/focal64"
+    master.vm.hostname = "jenkins-master"
+    master.vm.network "private_network", ip: "192.168.56.10"
+    master.vm.provider "virtualbox" do |vb|
+      vb.name = "jenkins-master"
+    end
+    master.vm.provision "shell", inline: <<-SHELL
+      sudo apt update -y
+      sudo apt install -y openjdk-11-jdk docker.io
+    SHELL
+  end
+
+  # Jenkins Worker
+  config.vm.define "jenkins-worker" do |worker|
+    worker.vm.box = "ubuntu/focal64"
+    worker.vm.hostname = "jenkins-worker"
+    worker.vm.network "private_network", ip: "192.168.56.11"
+    worker.vm.provider "virtualbox" do |vb|
+      vb.name = "jenkins-worker"
+    end
+    worker.vm.provision "shell", inline: <<-SHELL
+      sudo apt update -y
+      sudo apt install -y docker.io
+    SHELL
+  end
+end
