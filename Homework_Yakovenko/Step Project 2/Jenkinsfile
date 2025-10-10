@@ -2,55 +2,43 @@ pipeline {
     agent { label 'jenkins-worker' }
 
     environment {
-    DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-    DOCKER_IMAGE = "yknk/test-node-app"
-}
+        IMAGE_NAME = 'yknk/test-node-app'
+        DOCKER_CREDENTIALS = credentials('dockerhub')
+    }
 
     stages {
-        stage('Pull Code') {
+        stage('Pull code') {
             steps {
-                echo 'Pulling code from GitHub...'
                 checkout scm
             }
         }
 
-       stage('Build Docker Image') {
-    steps {
-        echo '🐳 Building Docker image...'
-        sh 'docker build -t $DOCKER_IMAGE -f "Homework_Yakovenko/Step Project 2/Dockerfile" "Homework_Yakovenko/Step Project 2"'
-    }
-}
-
-        stage('Run Tests') {
+        stage('Build Docker image') {
             steps {
-                echo 'Running tests inside container...'
-                script {
-                    try {
-                        sh 'docker run --rm $DOCKER_IMAGE test'
-                    } catch (err) {
-                        error("❌ Tests failed")
-                    }
-                }
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Run tests') {
+            steps {
+                sh 'docker run --rm $IMAGE_NAME npm test'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                echo 'Pushing Docker image to Docker Hub...'
-                sh '''
-                    echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
-                    docker push $DOCKER_IMAGE
-                '''
+                sh 'echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin'
+                sh 'docker push $IMAGE_NAME'
             }
         }
     }
 
     post {
         success {
-            echo "✅ Pipeline completed successfully!"
+            echo 'Pipeline completed successfully'
         }
         failure {
-            echo "❌ Tests failed or push error occurred."
+            echo 'Tests failed'
         }
     }
 }
