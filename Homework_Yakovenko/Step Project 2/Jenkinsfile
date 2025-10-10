@@ -2,9 +2,9 @@ pipeline {
     agent { label 'jenkins-worker' }
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-        DOCKER_IMAGE = "devopsyakovenko/test-node-app"
-    }
+    DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+    DOCKER_IMAGE = "yknk/test-node-app"
+}
 
     stages {
         stage('Pull Code') {
