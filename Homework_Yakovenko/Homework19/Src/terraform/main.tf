@@ -34,7 +34,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_eip" "nat" {
-  vpc = true
+  domain = "vpc"
 
   tags = {
     Name = "${local.name_prefix}-nat-eip"
@@ -156,18 +156,3 @@ resource "aws_instance" "private_ec2" {
   }
 }
 
-
-resource "aws_instance" "private_ec2" {
-  ami           = data.aws_ami.amazon_linux.id
-  instance_type = var.instance_type
-  subnet_id     = aws_subnet.private.id
-  key_name      = var.key_name
-
-  security_groups = [
-    aws_security_group.private_sg.id
-  ]
-
-  tags = {
-    Name = "${local.name_prefix}-private-ec2"
-  }
-}
