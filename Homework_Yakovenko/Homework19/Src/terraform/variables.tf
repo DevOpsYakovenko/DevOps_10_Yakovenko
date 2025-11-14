@@ -4,8 +4,7 @@ variable "environment" {
 }
 
 variable "aws_region" {
-  type    = string
-  default = "eu-central-1"
+  type = string
 }
 
 variable "vpc_cidr" {
@@ -29,6 +28,9 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  type    = string
-  default = "yakovenkohw19-key"
+  type = string
+}
+
+variable "allowed_ssh_cidr" {
+  type = string
 }
