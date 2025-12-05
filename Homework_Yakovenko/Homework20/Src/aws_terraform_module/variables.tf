@@ -1,10 +1,10 @@
-variable "vpc_id" {
-  description = "ID of the VPC where EC2 will be created"
+variable "subnet_id" {
+  description = "Subnet ID for EC2 instance"
   type        = string
 }
 
-variable "list_of_open_ports" {
-  description = "List of ports to open in the security group"
-  type        = list(number)
-  default     = [80]
+variable "vpc_id" {
+  description = "VPC ID for EC2 instance"
+  type        = string
 }
+

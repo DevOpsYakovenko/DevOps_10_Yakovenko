@@ -23,19 +23,25 @@ resource "aws_security_group" "nginx_sg" {
 }
 
 resource "aws_instance" "nginx" {
-  ami                         = "ami-0ec7f9846da6b0f61" # Amazon Linux 2023 - eu-central-1
-  instance_type               = "t2.micro"
+  ami                         = var.ami
+  instance_type               = var.instance_type
+  subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.nginx_sg.id]
   associate_public_ip_address = true
 
   user_data = <<-EOF
     #!/bin/bash
+    yum update -y
     yum install -y nginx
     systemctl enable nginx
     systemctl start nginx
   EOF
 
   tags = {
-    Name = "nginx-instance"
+    Name = var.instance_name
   }
+}
+
+output "public_ip" {
+  value = aws_instance.nginx.public_ip
 }
