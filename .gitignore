@@ -21,3 +21,7 @@
 *.tfvars
 *.tfvars.json
 .terraform.lock.hcl
+
+**/venv/
+
+Homework_Yakovenko/Homework21/Src/ansible/venv/

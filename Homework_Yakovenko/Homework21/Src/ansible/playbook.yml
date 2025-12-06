@@ -1,0 +1,44 @@
+---
+- name: Deploy Nginx with Docker & Compose
+  hosts: nginx
+  become: yes
+
+  tasks:
+    - name: Install Docker
+      dnf:
+        name: docker
+        state: present
+
+    - name: Enable and start Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+
+    - name: Create directory for Nginx deployment
+      file:
+        path: /opt/nginx
+        state: directory
+
+    - name: Install Docker Compose v2 manually
+      shell: |
+        mkdir -p /usr/libexec/docker/cli-plugins/
+        curl -SL https://github.com/docker/compose/releases/download/v2.30.0/docker-compose-linux-x86_64 \
+          -o /usr/libexec/docker/cli-plugins/docker-compose
+        chmod +x /usr/libexec/docker/cli-plugins/docker-compose
+
+    - name: Copy docker-compose.yml
+      copy:
+        src: docker/docker-compose.yml
+        dest: /opt/nginx/docker-compose.yml
+
+    - name: Run Nginx with Docker Compose
+      shell: |
+        /usr/libexec/docker/cli-plugins/docker-compose \
+          -f /opt/nginx/docker-compose.yml up -d
