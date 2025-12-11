@@ -1,0 +1,53 @@
+---
+- hosts: jenkins_master
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - openjdk-17-jdk
+          - gnupg2
+          - nginx
+        state: present
+
+    - name: Add Jenkins key using new method
+      shell: |
+        curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | tee \
+        /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+    - name: Add Jenkins repo
+      copy:
+        dest: /etc/apt/sources.list.d/jenkins.list
+        content: |
+          deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+
+    - name: Update apt again after adding repo
+      apt:
+        update_cache: yes
+
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        state: present
+
+    - name: Enable and start Jenkins
+      service:
+        name: jenkins
+        state: started
+        enabled: true
+
+    - name: Copy nginx config
+      copy:
+        src: nginx.conf
+        dest: /etc/nginx/sites-available/default
+        mode: "0644"
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
