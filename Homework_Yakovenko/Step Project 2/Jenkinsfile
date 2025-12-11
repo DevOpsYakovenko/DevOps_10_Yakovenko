@@ -7,7 +7,6 @@ pipeline {
     }
 
     stages {
-
         stage('Pull code') {
             steps {
                 checkout scm
@@ -16,26 +15,20 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                dir('Homework_Yakovenko/Step Project 2') {
-                    sh 'docker build -t $IMAGE_NAME .'
-                }
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
         stage('Run tests') {
             steps {
-                dir('Homework_Yakovenko/Step Project 2') {
-                    sh 'docker run --rm $IMAGE_NAME npm test'
-                }
+                sh 'docker run --rm $IMAGE_NAME sh -c "npm test"'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                dir('Homework_Yakovenko/Step Project 2') {
-                    sh 'echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin'
-                    sh 'docker push $IMAGE_NAME'
-                }
+                sh 'echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin'
+                sh 'docker push $IMAGE_NAME'
             }
         }
     }
