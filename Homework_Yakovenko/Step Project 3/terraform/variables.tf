@@ -1,7 +1,12 @@
-variable "ami" {
-  default = "ami-0faab6bdbac9486fb"
+variable "region" {
+  type = string
 }
 
-variable "key_name" {
-  default = "mykey2"
+variable "instance_type" {
+  type = string
 }
+
+variable "vpc_cidr" {
+  type = string
+}
+

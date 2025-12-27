@@ -1,17 +1,20 @@
 provider "aws" {
-  region = "eu-central-1"
+  region = var.region
 }
 
+# ---------- KEY PAIR ----------
 resource "aws_key_pair" "jenkins_key" {
   key_name   = "yakovenko-jenkins-main-626126209976"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC840uOV3mhgebSfx4VgQ4iyUtuGwbMICaCV1IHBRfb/Kp6KmsieuQTIV38bUrEsLv0oqc8dkaKE5E2baKD9nf+sx7GSLSU/NHgqWYxgiTT0yXc9NdDUbFWjSE6M96tVvgx8t+cEPp/y9Gv/TXD83JENHildzhrMMy5Epkgpauuywe/uA/OEkaBWGSsR1X+Ke4enAoygl0MGaPSBJlQpotLsDKLl0H0sVLQo3TL1ecReC4tDBro08mBV/lemfGrFjv5M7rrBuSwy9E3fRfKpJmBxeMylwbfTHPCFmKP8hRYpPnyD0aR6F9O848vUhAXzltYUMBJmsn19PFYlcC9q4M+WsBTNe9pHFxtf7+SLVgKJttaDeBKFZNrhhKC6+Y+Bf3OR+fD9mDu0zbNa53nCnFec/TDYtxOvaT9tSLecah5Coz16wkHvUk3mtkTmW2tpKl6OVnTxeX0C7GpxnxUoNPQM/hAqyyp+zaRMA0VT38E6dxWWtWrBKG8Al9jE/p9SkxOzVGzIyrYYqkExnYiyiIgBPd+GUTaZgKS6zfWDxPmjTeCZIzU6TMpmLJ2YXBsX/ThwIJve6HJHvoSHJydKg1bj2bRaproMvXWdaUKTMA/93LjfcizFW0pFgL+02UL+FyBDzS37pm8fuEBBe5BHlpuLFF52/Ug1FFmVlzNL/pkBw== yakovenko-jenkins-main"
 }
 
+# ---------- VPC ----------
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr
   tags       = { Name = "main-vpc" }
 }
 
+# ---------- SUBNETS ----------
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
@@ -25,11 +28,13 @@ resource "aws_subnet" "private_subnet" {
   tags       = { Name = "private-subnet" }
 }
 
+# ---------- INTERNET GATEWAY ----------
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags   = { Name = "main-igw" }
 }
 
+# ---------- PUBLIC ROUTE TABLE ----------
 resource "aws_route_table" "rt_public" {
   vpc_id = aws_vpc.main.id
 
@@ -46,6 +51,7 @@ resource "aws_route_table_association" "public_assoc" {
   route_table_id = aws_route_table.rt_public.id
 }
 
+# ---------- NAT GATEWAY ----------
 resource "aws_eip" "nat_eip" {
   domain = "vpc"
 }
@@ -56,6 +62,7 @@ resource "aws_nat_gateway" "nat" {
   tags          = { Name = "nat-gateway" }
 }
 
+# ---------- PRIVATE ROUTE TABLE ----------
 resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.main.id
 
@@ -72,6 +79,7 @@ resource "aws_route_table_association" "private_assoc" {
   route_table_id = aws_route_table.private_rt.id
 }
 
+# ---------- SECURITY GROUP ----------
 resource "aws_security_group" "jenkins_sg" {
   name   = "jenkins-sg"
   vpc_id = aws_vpc.main.id
@@ -80,21 +88,21 @@ resource "aws_security_group" "jenkins_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # SSH
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Jenkins UI
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # HTTP
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -107,26 +115,39 @@ resource "aws_security_group" "jenkins_sg" {
   tags = { Name = "jenkins-sg" }
 }
 
+# ---------- JENKINS MASTER ----------
 resource "aws_instance" "jenkins_master" {
-  ami                    = "ami-065deacbcaac64cf2" # Ubuntu 22.04 (eu-central-1)
-  instance_type          = "t2.micro"
+  ami                    = "ami-065deacbcaac64cf2"
+  instance_type          = var.instance_type
   subnet_id              = aws_subnet.public_subnet.id
   key_name               = aws_key_pair.jenkins_key.key_name
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
 
+  user_data = file("user_data_master.sh")
+
   tags = { Name = "jenkins-master" }
 }
 
+# ---------- JENKINS WORKER (SPOT) ----------
 resource "aws_instance" "jenkins_worker" {
   ami                    = "ami-065deacbcaac64cf2"
-  instance_type          = "t2.micro"
+  instance_type          = var.instance_type
   subnet_id              = aws_subnet.private_subnet.id
   key_name               = aws_key_pair.jenkins_key.key_name
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
 
-  tags = { Name = "jenkins-worker" }
+  instance_market_options {
+    market_type = "spot"
+
+    spot_options {
+      spot_instance_type = "one-time"
+    }
+  }
+
+  tags = { Name = "jenkins-worker-spot" }
 }
 
+# ---------- OUTPUTS ----------
 output "jenkins_master_ip" {
   value = aws_instance.jenkins_master.public_ip
 }
