@@ -1,0 +1,109 @@
+# Pod та Service з nginx у локальному Kubernetes-кластері
+
+## Опис
+
+Цей проєкт демонструє створення Pod з nginx у локальному Kubernetes-кластері та налаштування Service для доступу до стандартної вебсторінки nginx з локального комп’ютера.
+
+Локальний кластер створюється за допомогою Minikube.  
+Pod з nginx розгортається через Kubernetes-маніфест.  
+Service типу NodePort використовується для відкриття порту 80 контейнера nginx.
+
+---
+
+## Вимоги
+
+- Docker
+- Minikube
+- kubectl
+
+---
+
+## Код створення кластера
+
+Для створення локального Kubernetes-кластера використовується shell-скрипт `create-cluster.sh`:
+
+```bash
+#!/bin/bash
+minikube start --driver=docker
+Перевірка стану кластера:
+
+kubectl get nodes
+Розгортання Pod
+Pod з nginx описаний у файлі nginx-pod.yaml та створений командою:
+
+kubectl apply -f nginx-pod.yaml
+Перевірка стану Pod:
+
+kubectl get pods
+Налаштування Service
+Для доступу до nginx створено Service типу NodePort, описаний у файлі nginx-service.yaml.
+
+Service відкриває порт 80 контейнера nginx для доступу з локального середовища.
+
+Створення Service:
+
+kubectl apply -f nginx-service.yaml
+Перевірка Service:
+
+kubectl get services
+Доступ до nginx
+Оскільки Minikube запущений з Docker-драйвером, доступ до сервісу здійснюється за допомогою команди:
+
+minikube service nginx-service
+Після виконання команди у браузері відкривається стандартна вебсторінка nginx.
+
+Результат
+Стандартна сторінка nginx (Welcome to nginx!) успішно відображається у браузері, що підтверджує коректну роботу Pod та Service.
+
+_______________________________________________________
+
+Nginx Pod and Service in a Local Kubernetes Cluster
+Description
+This project demonstrates how to deploy an nginx Pod in a local Kubernetes cluster and expose it using a Service to access the default nginx web page from the local machine.
+
+The local cluster is created using Minikube.
+The nginx Pod is deployed via a Kubernetes manifest.
+A NodePort Service is used to expose port 80 of the nginx container.
+
+Prerequisites
+Docker
+
+Minikube
+
+kubectl
+
+Cluster Creation Code
+The local Kubernetes cluster is created using the create-cluster.sh shell script:
+
+#!/bin/bash
+minikube start --driver=docker
+Cluster status verification:
+
+kubectl get nodes
+Pod Deployment
+The nginx Pod is defined in nginx-pod.yaml and created using:
+
+kubectl apply -f nginx-pod.yaml
+Pod status check:
+
+kubectl get pods
+Service Configuration
+To expose nginx, a NodePort Service is defined in nginx-service.yaml.
+
+The Service exposes port 80 of the nginx container for access from the local environment.
+
+Service creation:
+
+kubectl apply -f nginx-service.yaml
+Service status check:
+
+kubectl get services
+Accessing nginx
+Since Minikube is running with the Docker driver, the service is accessed using:
+
+minikube service nginx-service
+This command opens the default nginx web page in the browser.
+
+Result
+The standard nginx welcome page (Welcome to nginx!) is successfully displayed in the browser, confirming that the Pod and Service are working correctly.
+
