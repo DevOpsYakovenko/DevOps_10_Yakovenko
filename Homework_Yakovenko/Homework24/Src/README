@@ -1,0 +1,188 @@
+# Python Random String Service (Kubernetes)
+
+## Опис
+Проєкт демонструє контейнеризований Python-сервіс, який повертає випадковий рядок у HTTP-відповіді. Сервіс розгорнутий у Kubernetes за допомогою Deployment та Service та підтримує балансування трафіку між кількома pod-ами.
+
+---
+
+## Архітектура
+- Python HTTP-сервер
+- Docker-образ для запуску застосунку
+- Kubernetes Deployment з кількома репліками
+- Kubernetes Service типу NodePort для доступу до сервісу
+
+---
+
+## Docker
+- Base image: `python:3.11-slim`
+- Exposed port: `8082`
+- Image: `yknk/python-random:latest`
+- Registry: Docker Hub (private)
+
+---
+
+## Kubernetes
+
+### Deployment
+- Name: `python-random`
+- Replicas: `3`
+- Container image: `yknk/python-random:latest`
+- ContainerPort: `8082`
+
+### Service
+- Name: `python-random-service`
+- Type: `NodePort`
+- Port: `80`
+- TargetPort: `8082`
+
+---
+
+## Networking та доступ до сервісу (macOS)
+
+Під час використання Kubernetes з Minikube на macOS (driver: Docker) доступ до сервісів має певні особливості.
+
+### Отримання доступу до сервісу
+Для Service типу `NodePort` прямий доступ через IP ноди може бути недоступний. Рекомендований спосіб отримання доступу:
+
+```bash
+minikube service python-random-service --url
+Команда створює тимчасовий тунель та повертає локальний URL виду:
+
+http://127.0.0.1:<PORT>
+ВАЖЛИВО: термінал, у якому виконано цю команду, має залишатися відкритим. Закриття терміналу призводить до зупинки тунелю.
+
+Виконання HTTP-запитів
+HTTP-запити до сервісу виконуються у окремому термінальному вікні:
+
+curl http://127.0.0.1:<PORT>
+Запит можна виконати кілька разів для перевірки роботи сервісу та балансування трафіку.
+
+Типові проблеми на macOS
+Service не відповідає
+Причина:
+
+тунель Minikube зупинений
+
+закрито термінал з активною командою minikube service
+
+Рішення:
+
+minikube service python-random-service --url
+Недоступний Node IP
+Команди:
+
+minikube ip
+curl http://<minikube-ip>:<nodeport>
+можуть не працювати на macOS з Docker driver через мережеву ізоляцію.
+
+Рішення:
+
+використовувати minikube service ... --url
+
+Перевірка роботи та балансування
+Стан pod-ів:
+
+kubectl get pods
+Перевірка сервісу:
+
+curl http://127.0.0.1:<PORT>
+Кілька послідовних запитів повертають різні значення (name-XXX), що підтверджує розподіл трафіку між pod-ами.
+
+Результат
+Сервіс успішно розгорнутий у Kubernetes-кластері, Docker-образ збережений у Docker Hub, доступ до сервісу здійснюється через NodePort, а балансування навантаження між pod-ами підтверджене практичними запитами.
+
+----------------------------------------------------
+
+Python Random String Service (Kubernetes)
+Description
+This project demonstrates a containerized Python service that returns a random string in an HTTP response. The service is deployed to Kubernetes using a Deployment and a Service and supports traffic load balancing across multiple pods.
+
+Architecture
+Python HTTP server
+
+Docker image for application runtime
+
+Kubernetes Deployment with multiple replicas
+
+Kubernetes NodePort Service for external access
+
+Docker
+Base image: python:3.11-slim
+
+Exposed port: 8082
+
+Image: yknk/python-random:latest
+
+Registry: Docker Hub (private)
+
+Kubernetes
+Deployment
+Name: python-random
+
+Replicas: 3
+
+Container image: yknk/python-random:latest
+
+ContainerPort: 8082
+
+Service
+Name: python-random-service
+
+Type: NodePort
+
+Port: 80
+
+TargetPort: 8082
+
+Networking and Service Access (macOS)
+When running Kubernetes with Minikube on macOS using the Docker driver, service access has specific networking limitations.
+
+Accessing the Service
+For NodePort services, direct access via the node IP may not be available. The recommended way to access the service is:
+
+minikube service python-random-service --url
+This command creates a temporary tunnel and returns a local URL such as:
+
+http://127.0.0.1:<PORT>
+IMPORTANT: the terminal running this command must remain open. Closing the terminal will terminate the tunnel.
+
+Executing HTTP Requests
+HTTP requests are executed in a separate terminal window:
+
+curl http://127.0.0.1:<PORT>
+Multiple requests can be sent to verify service behavior and traffic distribution.
+
+Common macOS Issues
+Service is not reachable
+Cause:
+
+Minikube tunnel stopped
+
+Terminal running minikube service was closed
+
+Solution:
+
+minikube service python-random-service --url
+Node IP access does not work
+Commands like:
+
+minikube ip
+curl http://<minikube-ip>:<nodeport>
+may not work on macOS with the Docker driver due to network isolation.
+
+Solution:
+
+use minikube service ... --url
+
+Verification and Load Balancing
+Pod status:
+
+kubectl get pods
+Service testing:
+
+curl http://127.0.0.1:<PORT>
+Different responses (name-XXX) across multiple requests confirm traffic distribution across multiple pods.
+
+Result
+The service is successfully running in a Kubernetes cluster, the Docker image is stored in Docker Hub, service access is provided via NodePort, and load balancing across pods is verified through repeated HTTP requests.
+
